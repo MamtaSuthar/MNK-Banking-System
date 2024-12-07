@@ -1,14 +1,13 @@
 <?php
-
 namespace App;
 
-use Illuminate\Notifications\Notifiable;
-use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Illuminate\Notifications\Notifiable;
+use PragmaRX\Google2FA\Google2FA;
 
-class User extends Authenticatable
+class User extends Authenticatable 
 {
-    use Notifiable;
+    use  Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -16,7 +15,7 @@ class User extends Authenticatable
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'password',
+        'first_name', 'last_name', 'dob','address' ,'email', 'password',
     ];
 
     /**
@@ -36,4 +35,36 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function generateTwoFactorSecret()
+    {
+        $google2fa = new Google2FA();
+        $secret = $google2fa->generateSecretKey();
+    
+        $this->two_factor_secret = encrypt($secret); 
+        $this->save();
+    
+        return $secret;
+    }
+    
+    public function verifyTwoFactorCode($token)
+    {
+        if (!$this->two_factor_secret) {
+            return false; 
+        }
+    
+        try {
+            $decryptedSecret = decrypt($this->two_factor_secret); 
+        } catch (\Illuminate\Contracts\Encryption\DecryptException $e) {
+            logger('Decryption failed for two_factor_secret.', ['error' => $e->getMessage()]);
+            return false; 
+        }
+        
+        if($decryptedSecret == $token){
+            return true;
+        }else{
+            return false;
+        }
+    }
+
 }
