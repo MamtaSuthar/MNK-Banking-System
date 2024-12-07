@@ -40,6 +40,7 @@ Route::middleware(['auth'])->group(function () {
     // User routes
     Route::middleware(['2fa'])->group(function () {
         Route::get('/', [HomeController::class, 'index'])->name('home');
+    Route::get('/home', [HomeController::class, 'index']);
     });
 
     // Currency Conversion
