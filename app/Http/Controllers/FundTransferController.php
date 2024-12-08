@@ -63,4 +63,15 @@ class FundTransferController extends Controller
         return redirect()->route('transfer.index')->with('success', 'Fund transfer successful!');
     }
 
+    public function history()
+    {
+        $user = Auth::user(); 
+    
+        $sentTransactions = Transaction::where('recipient_id', $user->id)->with('sender')->get();
+        $receivedTransactions = Transaction::where('sender_id', $user->id)->with('recipient')->get();
+    
+        return view('user.history', compact('sentTransactions', 'receivedTransactions'));
+    }
+    
+
 }

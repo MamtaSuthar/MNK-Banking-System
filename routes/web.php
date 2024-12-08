@@ -43,7 +43,8 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/', [HomeController::class, 'index'])->name('home');
         Route::get('/home', [HomeController::class, 'index']);
 
-          // Route to handle the user funds
+        // Route to handle the user funds
+        Route::get('/history', [FundTransferController::class, 'history'])->name('history.index');
         Route::get('/transfer', [FundTransferController::class, 'index'])->name('transfer.index');
         Route::post('/transfer', [FundTransferController::class, 'store'])->name('transfer.store');
     });

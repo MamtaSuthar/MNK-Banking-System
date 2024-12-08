@@ -22,4 +22,14 @@ class Transaction extends Model
     {
         return $this->belongsTo(BankAccount::class);
     }
+
+    public function sender()
+    {
+        return $this->belongsTo(User::class, 'sender_id');
+    }
+
+    public function recipient()
+    {
+        return $this->belongsTo(User::class, 'recipient_id');
+    }
 }
