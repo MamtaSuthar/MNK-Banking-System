@@ -48,7 +48,7 @@ Route::middleware([\App\Http\Middleware\AdminMiddleware::class])->group(function
     Route::get('/admin/open-multiple-accounts', [AccountController::class, 'openMultipleAccountsForm'])->name('admin.accounts.openMultipleForm');
 
     // Route to handle the form submission for opening multiple accounts
-    Route::post('/accounts/open-multiple', [AdminController::class, 'openMultipleAccounts'])->name('admin.accounts.openMultiple');
+    Route::post('/accounts/open-multiple', [AccountController::class, 'openMultipleAccounts'])->name('admin.accounts.openMultiple');
 });
 
    // Two-Factor Authentication routes
