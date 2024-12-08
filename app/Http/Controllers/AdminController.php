@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 
 class AdminController extends Controller
 {
+    
     public function index()
     {
         $users = User::where('is_admin', 0)->with('bankAccounts')->get();  

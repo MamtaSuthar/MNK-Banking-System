@@ -22,6 +22,7 @@ class CreateTransactionsTable extends Migration
             $table->decimal('amount', 15, 2); 
             $table->string('currency', 3)->default('USD'); 
             $table->string('description')->nullable(); 
+            $table->string('transaction_type')->nullable();
             $table->timestamp('transaction_date')->useCurrent(); 
             $table->timestamps();
        

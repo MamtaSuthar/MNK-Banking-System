@@ -13,10 +13,10 @@ class FundTransferController extends Controller
 {
     protected $currencyService;
 
-    // public function __construct(CurrencyExchangeService $currencyService)
-    // {
-    //     $this->currencyService = $currencyService;
-    // }
+    public function __construct(CurrencyExchangeService $currencyService)
+    {
+        $this->currencyService = $currencyService;
+    }
 
     public function index()
     {
@@ -96,34 +96,34 @@ class FundTransferController extends Controller
         $user = Auth::user();
         $amount = $request->input('amount');
         $currency = $request->input('currency');
-        $recipientId = $request->input('recipient_id');
+        $recipientId = $request->input('account_number');
 
-        $recipient = User::find($recipientId);
+        $recipient = BankAccount::where('account_number', $recipientId)->first();
+        $sender = Transaction::where('recipient_id', $user->id)->with('sender')->first();
+ 
+        $userCurrency = $sender->currency;
 
-        // Get the user's current currency (assuming user has a currency field)
-        $userCurrency = $user->currency;
-
-        // If the user and recipient have different currencies, we need to convert
         if ($userCurrency !== $currency) {
             $exchangeRate = $this->currencyService->getExchangeRate($userCurrency, $currency);
             if ($exchangeRate) {
                 // Apply the 0.01 spread
-                $conversionRate = $exchangeRate * 0.99; // Applying the 0.01 spread
+                $conversionRate = $exchangeRate * 0.99; 
                 $convertedAmount = $amount * $conversionRate;
             } else {
                 return back()->with('error', 'Unable to fetch exchange rates.');
             }
         } else {
-            $convertedAmount = $amount; // No conversion needed
+            $convertedAmount = $amount; 
         }
 
-        // Create a transaction record
+        
         Transaction::create([
             'sender_id' => $user->id,
             'recipient_id' => $recipient->id,
             'amount' => $convertedAmount,
             'currency' => $currency,
-            'transaction_type' => 'transfer',  // Example type, customize as needed
+            'transaction_type' => 'transfer',  
+            'bank_account_id' =>  $sender->bank_account_id,
             'description' => $request->input('description'),
         ]);
 

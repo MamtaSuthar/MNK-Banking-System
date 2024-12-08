@@ -8,7 +8,7 @@
     <h1>Enable Two-Factor Authentication</h1>
 
     <p>Scan this QR code with the Google Authenticator app:</p>
-    <img src="{{ $QRImage }}" alt="QR Code">
+    <img src="{{ $QR_Image }}" alt="QR Code">
 
     <p>Or enter the secret key manually: {{ $secret }}</p>
 

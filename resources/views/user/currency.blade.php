@@ -24,7 +24,7 @@
         @csrf
         <div class="form-group">
             <label for="recipient_id">Recipient</label>
-            <input type="text" class="form-control" name="recipient_id" required>
+            <input type="text" class="form-control" name="account_number" required>
         </div>
 
         <div class="form-group">
