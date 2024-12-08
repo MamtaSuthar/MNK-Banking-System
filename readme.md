@@ -1,66 +1,57 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+Application Workflow  :
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+1. User Authentication
+Step 1: A user registers or logs into the system using credentials via use laravel auth ui.
+Step 2: If two-factor authentication (2FA) is enabled:
+The system prompts the user to scan a QR code using their authenticator app.
+The user inputs the generated 2FA code for verification.
+On success, the user is redirected to the dashboard based on role .
 
-## About Laravel
+Default admin is regisetered if any other user will register then role will be user .
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Tools Used:
+PragmaRX Google2FA Laravel for implementing 2FA.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+2. Dashboard Overview
+Step 1: After login, the user lands on the dashboard.
+Step 2: The dashboard provides access to key features like:
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+For Users : Transfer history of his accounts ,Fund Transfer and Currency Transfer for changing the currency along with account details .
+For Admin : In Dashboard functionlity to add multiple saving account with 10000$ default for users, User list with details , Accounts List along with history of transactaion  
 
-## Learning Laravel
+Account Overview: Displays balance, recent transactions, and notifications.
+Currency Exchange: Allows users to convert currency using real-time exchange rates fetched from external APIs.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+3. Currency Exchange
+Step 1: The user navigates to the "Currency Exchange" section.
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+Step 2: The system fetches real-time exchange rates using the custom CurrencyExchangeService.
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+Tools Used:
+GuzzleHTTP for making API requests.
+Laravel Service Class for separating business logic.
+Step 3: The user selects the desired currency and initiates the exchange.
 
-## Laravel Sponsors
+4. Front-End Interaction
+Step 1: The front-end is powered by Bootstrap for a responsive design.
+Step 2: Dynamic components are managed using JavaScript and npm-installed dependencies.
+Commands Used: php artisan ui bootstrap --auth
+bash
+Copy code
+npm install
+npm run dev
+Step 3: The application ensures smooth user interaction through AJAX and dynamic UI elements.
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+5. Error Handling and Logging
+Step 1: All requests are validated before processing.
+Step 2: Errors such as invalid 2FA codes or API failures are logged.
+Tools Used:
+Laravel Validation for request validation.
+Laravel's built-in logging system for error tracking.
 
-### Premium Partners
-
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
-
-## Contributing
-
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+6. Admin Management (Optional)
+Step 1: Admins can log in and access a dedicated panel.
+Step 2: Admin capabilities include:
+Managing user accounts.
+Viewing and auditing transactions.
+Configuring system settings.
