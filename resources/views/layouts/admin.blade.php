@@ -71,5 +71,6 @@
 
     <!-- Scripts -->
    @include('includes.footer')
+   @yield('custome-script')
 </body>
 </html>

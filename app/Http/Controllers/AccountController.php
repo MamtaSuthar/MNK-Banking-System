@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 use App\BankAccount;
 use App\Transaction;
 use Illuminate\Http\Request;
+use App\User;
 
 class AccountController extends Controller
 {
@@ -60,5 +61,39 @@ class AccountController extends Controller
         ]);
 
         return redirect()->route('admin.accounts.showTransactions', $accountId)->with('success', 'Transaction completed successfully');
+    }
+
+    public function openMultipleAccounts(Request $request)
+    {
+        $accounts = $request->input('accounts');
+        foreach ($accounts as $account) {
+            $user = User::create([
+                'first_name' => $account['first_name'],
+                'last_name'  => $account['last_name'],
+                'dob'        => $account['dob'],
+                'address'    => $account['address'],
+                'email'      => $account['email'], 
+                'password'   => bcrypt('defaultpassword'), 
+            ]);
+
+            BankAccount::create([
+                'user_id'        => $user->id,
+                'account_number' => $this->generateUniqueAccountNumber(),
+                'balance'        => 10000,
+                'account_type'   => 'savings',
+                'is_active'      => true,
+            ]);
+        }
+
+        return redirect()->route('admin.dashboard')->with('success', 'Saving accounts created successfully.');
+    }
+
+    private function generateUniqueAccountNumber()
+    {
+        do {
+            $accountNumber = mt_rand(1000000000, 9999999999); // 10-digit account number
+        } while (BankAccount::where('account_number', $accountNumber)->exists());
+
+        return $accountNumber;
     }
 }

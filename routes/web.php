@@ -14,10 +14,9 @@ Route::middleware(['auth'])->group(function () {
 
     // Admin routes
     Route::middleware(['admin', '2fa'])->group(function () {
-        Route::get('/admin-dashboard', function () {
-            return view('admin.dashboard');
-        })->name('admin.dashboard');
-
+        Route::get('/admin-dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
+        Route::post('/accounts/open-multiple', [AdminController::class, 'openMultipleAccounts'])->name('admin.accounts.openMultiple');
+        
         // Manage Users Route
         Route::get('/admin/users', [AdminController::class, 'manageUsers'])->name('admin.users');
 
