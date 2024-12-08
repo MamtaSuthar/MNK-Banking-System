@@ -8,11 +8,10 @@ use App\Http\Controllers\AccountController;
 use App\Http\Controllers\FundTransferController;
 use App\Http\Controllers\CurrencyConversionController;
 use App\Http\Controllers\TransactionController;
-use App\Http\Middleware\TwoFactorAuth;
 
 Auth::routes(['verify' => true]);
 
-Route::middleware(['auth', \App\Http\Middleware\TwoFactorAuth::class])->group(function () {
+Route::middleware(['auth', \App\Http\Middleware\TwoFactorAuth::class,\App\Http\Middleware\EnsureUserRole::class])->group(function () {
 
     // User routes
     Route::get('/', [HomeController::class, 'index'])->name('home');
@@ -29,6 +28,7 @@ Route::middleware(['auth', \App\Http\Middleware\TwoFactorAuth::class])->group(fu
     Route::get('/currency-convert/{amount}/{from}/{to}', [CurrencyConversionController::class, 'convert'])->name('currency.convert');
 });
 
+Route::middleware([\App\Http\Middleware\AdminMiddleware::class])->group(function () {
     Route::get('/admin/dashboard', [AdminController::class, 'index'])->name('admin.dashboard');
     
     // Manage Users Route
@@ -49,7 +49,7 @@ Route::middleware(['auth', \App\Http\Middleware\TwoFactorAuth::class])->group(fu
 
     // Route to handle the form submission for opening multiple accounts
     Route::post('/accounts/open-multiple', [AdminController::class, 'openMultipleAccounts'])->name('admin.accounts.openMultiple');
-
+});
 
    // Two-Factor Authentication routes
    Route::get('/enable-two-factor', [TwoFactorController::class, 'enable2FA'])->name('two-factor.enable');
