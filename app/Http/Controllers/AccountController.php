@@ -31,7 +31,7 @@ class AccountController extends Controller
 
     public function showTransactions($accountId)
     {
-        $account = BankAccount::with('transactions')->findOrFail($accountId);
+        $account = BankAccount::with('transactions','user')->findOrFail($accountId);
         return view('admin.accounts.transactions', compact('account'));
     }
 

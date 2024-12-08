@@ -16,14 +16,20 @@ class CreateTransactionsTable extends Migration
         Schema::create('transactions', function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('bank_account_id'); 
-            $table->foreign('bank_account_id')->references('id')->on('bank_accounts')->onDelete('cascade');
+            $table->unsignedBigInteger('sender_id');
+            $table->unsignedBigInteger('recipient_id');
             $table->enum('type', ['debit', 'credit']); 
             $table->decimal('amount', 15, 2); 
             $table->string('currency', 3)->default('USD'); 
             $table->string('description')->nullable(); 
             $table->timestamp('transaction_date')->useCurrent(); 
             $table->timestamps();
+       
+            $table->foreign('bank_account_id')->references('id')->on('bank_accounts')->onDelete('cascade');
+            $table->foreign('sender_id')->references('id')->on('users')->onDelete('cascade');
+            $table->foreign('recipient_id')->references('id')->on('users')->onDelete('cascade');
         });
+        
         
     }
 
