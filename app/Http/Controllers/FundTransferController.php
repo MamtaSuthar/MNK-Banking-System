@@ -15,48 +15,52 @@ class FundTransferController extends Controller
         return view('user.transfer');
     }
 
-
     public function store(Request $request)
     {
         $request->validate([
             'recipient_account_number' => 'required|exists:bank_accounts,account_number',
             'amount' => 'required|numeric|min:1',
         ]);
-       
+
         $sender = Auth::user();
+        $senderAccount = BankAccount::where('user_id', $sender->id)->first();
         $recipientAccount = BankAccount::where('account_number', $request->recipient_account_number)->first();
         $amount = $request->amount;
 
-        $account_details = User::where('id', Auth::user()->id)->with('bankAccounts')->first();
-        if ($account_details->balance < $amount) {
+        // Check if sender has sufficient balance
+        if ($senderAccount->balance < $amount) {
             return back()->withErrors(['amount' => 'Insufficient balance for this transfer.']);
         }
 
-        
-        DB::transaction(function () use ($sender, $recipient, $amount) {
-            // Deduct amount from sender
-            $sender->balance -= $amount;
-            $sender->save();
+        DB::transaction(function () use ($senderAccount, $recipientAccount, $amount, $sender) {
+            // Deduct amount from sender's account
+            $senderAccount->balance -= $amount;
+            $senderAccount->save();
 
-            // Add amount to recipient
-            $recipient->balance += $amount;
-            $recipient->save();
+            // Add amount to recipient's account
+            $recipientAccount->balance += $amount;
+            $recipientAccount->save();
 
-            Transaction::create([
-                'sender_id' => $sender->id,
-                'recipient_id' => $recipient->id,
-                'amount' => $amount,
-                'description' => "Transferred to {$recipient->account_number}",
-            ]);
-
-            Transaction::create([
-                'sender_id' => $recipient->id,
-                'recipient_id' => $sender->id,
-                'amount' => $amount,
-                'description' => "Received from {$sender->account_number}",
-            ]);
+            // Log transactions
+                Transaction::create([
+                    'sender_id' => $sender->id,
+                    'bank_account_id' => $senderAccount->id, // sender's bank account ID
+                    'recipient_id' => $recipientAccount->user_id,
+                    'amount' => $amount,
+                    'description' => "Transferred to Account {$recipientAccount->account_number}",
+                ]);
+                
+                Transaction::create([
+                    'sender_id' => $recipientAccount->user_id,
+                    'bank_account_id' => $recipientAccount->id, // recipient's bank account ID
+                    'recipient_id' => $sender->id,
+                    'amount' => $amount,
+                    'description' => "Received from Account {$senderAccount->account_number}",
+                ]);
+                
         });
 
         return redirect()->route('transfer.index')->with('success', 'Fund transfer successful!');
     }
+
 }
