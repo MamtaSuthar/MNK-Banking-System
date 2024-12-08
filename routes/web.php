@@ -45,6 +45,8 @@ Route::middleware(['auth'])->group(function () {
 
         // Route to handle the user funds
         Route::get('/history', [FundTransferController::class, 'history'])->name('history.index');
+        Route::get('/currency', [FundTransferController::class, 'currency'])->name('currency.index');
+        Route::post('/currency', [FundTransferController::class, 'currency_store'])->name('currency.store');
         Route::get('/transfer', [FundTransferController::class, 'index'])->name('transfer.index');
         Route::post('/transfer', [FundTransferController::class, 'store'])->name('transfer.store');
     });

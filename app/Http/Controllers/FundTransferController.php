@@ -7,9 +7,17 @@ use App\BankAccount;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use App\Services\CurrencyExchangeService;
 
 class FundTransferController extends Controller
 {
+    protected $currencyService;
+
+    // public function __construct(CurrencyExchangeService $currencyService)
+    // {
+    //     $this->currencyService = $currencyService;
+    // }
+
     public function index()
     {
         return view('user.transfer');
@@ -72,6 +80,53 @@ class FundTransferController extends Controller
     
         return view('user.history', compact('sentTransactions', 'receivedTransactions'));
     }
-    
 
+    public function currency()
+    {
+        $user = Auth::user(); 
+    
+        $sentTransactions = Transaction::where('recipient_id', $user->id)->with('sender')->get();
+        $receivedTransactions = Transaction::where('sender_id', $user->id)->with('recipient')->get();
+    
+        return view('user.currency', compact('sentTransactions', 'receivedTransactions'));
+    }
+    
+    public function currency_store(Request $request)
+    {
+        $user = Auth::user();
+        $amount = $request->input('amount');
+        $currency = $request->input('currency');
+        $recipientId = $request->input('recipient_id');
+
+        $recipient = User::find($recipientId);
+
+        // Get the user's current currency (assuming user has a currency field)
+        $userCurrency = $user->currency;
+
+        // If the user and recipient have different currencies, we need to convert
+        if ($userCurrency !== $currency) {
+            $exchangeRate = $this->currencyService->getExchangeRate($userCurrency, $currency);
+            if ($exchangeRate) {
+                // Apply the 0.01 spread
+                $conversionRate = $exchangeRate * 0.99; // Applying the 0.01 spread
+                $convertedAmount = $amount * $conversionRate;
+            } else {
+                return back()->with('error', 'Unable to fetch exchange rates.');
+            }
+        } else {
+            $convertedAmount = $amount; // No conversion needed
+        }
+
+        // Create a transaction record
+        Transaction::create([
+            'sender_id' => $user->id,
+            'recipient_id' => $recipient->id,
+            'amount' => $convertedAmount,
+            'currency' => $currency,
+            'transaction_type' => 'transfer',  // Example type, customize as needed
+            'description' => $request->input('description'),
+        ]);
+
+        return back()->with('success', 'Transaction completed successfully.');
+    }
 }

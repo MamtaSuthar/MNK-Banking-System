@@ -7,6 +7,7 @@
             <a href="{{ route('history.index') }}" class="list-group-item list-group-item-action">Transfer History</a>
          
             <a href="{{ route('transfer.index') }}" class="list-group-item list-group-item-action">Fund Transfer</a>
+            <a href="{{ route('currency.index') }}" class="list-group-item list-group-item-action">Currency Transfer</a>
          
              <a class="dropdown-item list-group-item list-group-item-action" href="{{ route('logout') }}"
             onclick="event.preventDefault();
